@@ -1,0 +1,8 @@
+### List books
+GET http://localhost:8080/api/books
+
+### Place an order
+POST http://localhost:8080/api/orders
+Content-Type: application/json
+
+{"bookId": 1, "quantity": 2}
