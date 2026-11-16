@@ -11,3 +11,10 @@ create table book_order (
     quantity int            not null,
     total    decimal(10, 2) not null
 );
+
+create table review (
+    id      bigint auto_increment primary key,
+    book_id bigint        not null references book (id),
+    rating  int           not null,
+    comment varchar(1000) not null
+);

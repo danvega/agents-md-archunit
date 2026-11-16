@@ -6,3 +6,12 @@ POST http://localhost:8080/api/orders
 Content-Type: application/json
 
 {"bookId": 1, "quantity": 2}
+
+### Add a review
+POST http://localhost:8080/api/books/2/reviews
+Content-Type: application/json
+
+{"rating": 5, "comment": "Still the best Java book."}
+
+### List reviews for a book
+GET http://localhost:8080/api/books/2/reviews
