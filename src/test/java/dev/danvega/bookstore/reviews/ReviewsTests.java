@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -20,6 +21,7 @@ class ReviewsTests {
     @Test
     void addsAndListsReviewsForABook() {
         assertThat(mvc.post().uri("/api/books/2/reviews")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"rating": 5, "comment": "Still the best Java book."}
@@ -34,6 +36,7 @@ class ReviewsTests {
     @Test
     void reviewForUnknownBookIs404() {
         assertThat(mvc.post().uri("/api/books/999/reviews")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"rating": 4, "comment": "Good"}
@@ -45,12 +48,14 @@ class ReviewsTests {
     @Test
     void badRatingOrEmptyCommentIs400() {
         assertThat(mvc.post().uri("/api/books/1/reviews")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"rating": 6, "comment": "Too good"}
                         """))
                 .hasStatus(HttpStatus.BAD_REQUEST);
         assertThat(mvc.post().uri("/api/books/1/reviews")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"rating": 3, "comment": " "}

@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -20,6 +21,7 @@ class OrdersTests {
     @Test
     void placesAnOrderForABook() {
         assertThat(mvc.post().uri("/api/orders")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"bookId": 1, "quantity": 2}
@@ -31,6 +33,7 @@ class OrdersTests {
     @Test
     void orderForUnknownBookIs404() {
         assertThat(mvc.post().uri("/api/orders")
+                .with(httpBasic("reader", "password"))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
                         {"bookId": 999, "quantity": 1}

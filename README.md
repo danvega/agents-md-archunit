@@ -26,6 +26,29 @@ The rule here is "package by feature". [AGENTS.md](AGENTS.md) asks for it. [Pack
 | No deprecated APIs | `no_deprecated_api` |
 | Jackson 3 only | `jackson_3_only` |
 
+## Security: a gate ArchUnit can't be
+
+AGENTS.md asks for deny by default. ArchUnit can't check that. It sees structure, like packages, dependencies and annotations. A `SecurityFilterChain` is behavior, so [SecurityGateTest](src/test/java/dev/danvega/bookstore/SecurityGateTest.java) checks the running app instead.
+
+| AGENTS.md asks | The test checks |
+| --- | --- |
+| Deny by default | `a_route_that_does_not_exist_still_needs_login`. With "permit all" an unknown path gets 404. With deny by default it gets 401. |
+| Only listed routes are public | `every_route_not_on_the_public_list_needs_login`. It asks Spring MVC for every route and calls each one without a login. |
+
+The public routes live in [public-routes.txt](src/test/resources/public-routes.txt). A new endpoint fails the build until someone locks it down or adds it to that file on purpose.
+
+Reading books and reviews is public. Placing an order or writing a review needs the demo login `reader` / `password`.
+
+To see the gate fail, swap the rules in [SecurityConfig](src/main/java/dev/danvega/bookstore/security/SecurityConfig.java) for the anti-pattern and run `./mvnw verify`:
+
+```java
+.authorizeHttpRequests(auth -> auth
+        .requestMatchers("/admin/**").hasRole("ADMIN")
+        .anyRequest().permitAll())
+```
+
+The feature tests still pass. Both security checks fail, and the sweep names `POST /api/orders` and `POST /api/books/{bookId}/reviews` as open.
+
 ## Branches
 
 | Branch | What it is | `./mvnw verify` |

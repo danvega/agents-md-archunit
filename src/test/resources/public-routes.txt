@@ -1,0 +1,8 @@
+# Routes anyone may call without logging in. One per line: METHOD /pattern.
+# The security gate fails if any other route answers without a login.
+# Adding a line here makes a route public. Review it like a security change.
+GET /api/books
+GET /api/books/{id}
+GET /api/books/{bookId}/reviews
+# Spring Boot's error page
+GET /error
