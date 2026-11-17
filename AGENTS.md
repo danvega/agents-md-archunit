@@ -9,6 +9,18 @@
 - A feature package holds its own controller, service, repository and records.
 - No `controller`, `service`, `repository` or `model` packages.
 - A feature's repository is package-private. Other features call its public service (`Catalog`, `Orders`).
+- Features never depend on each other in a loop.
+
+## Controllers
+- A controller calls its feature's service. It never calls a repository.
+- No `@Transactional` on controllers. Transactions belong in the service.
+
+## Code
+- Use constructor injection. No `@Autowired` fields.
+- Log with SLF4J. No `System.out` and no `java.util.logging`.
+- Throw a specific exception, not `Exception` or `RuntimeException`.
+- Don't use deprecated APIs.
+- Use Jackson 3 (`tools.jackson`). No `com.fasterxml.jackson.core` or `databind` imports.
 
 ## Done means
 - `./mvnw verify` passes.

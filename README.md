@@ -10,6 +10,21 @@ The rule here is "package by feature". [AGENTS.md](AGENTS.md) asks for it. [Pack
 | --- | --- |
 | No `controller`, `service`, `repository` or `model` packages | `no_layer_packages` |
 | A feature's repository is package-private. Other features call its public service | `repositories_stay_in_their_feature` |
+| Features never depend on each other in a loop | `features_have_no_cycles` |
+
+## More rules on `main`
+
+`main` adds two more test classes. [SpringRulesTest](src/test/java/dev/danvega/bookstore/SpringRulesTest.java) keeps controllers thin. [CodingRulesTest](src/test/java/dev/danvega/bookstore/CodingRulesTest.java) uses rules that ship with ArchUnit in `GeneralCodingRules`, plus one Jackson rule.
+
+| AGENTS.md asks | ArchUnit checks |
+| --- | --- |
+| A controller never calls a repository | `controllers_do_not_use_repositories` |
+| No `@Transactional` on controllers | `controllers_are_not_transactional`, `controller_methods_are_not_transactional` |
+| Constructor injection only | `no_field_injection` |
+| No `System.out` or `java.util.logging` | `no_system_out`, `no_java_util_logging` |
+| Throw a specific exception | `no_generic_exceptions` |
+| No deprecated APIs | `no_deprecated_api` |
+| Jackson 3 only | `jackson_3_only` |
 
 ## Branches
 

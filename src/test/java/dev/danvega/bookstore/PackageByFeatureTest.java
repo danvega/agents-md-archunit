@@ -8,6 +8,7 @@ import org.springframework.data.repository.Repository;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 /**
  * AGENTS.md asks for package by feature. These rules check it on every build.
@@ -25,4 +26,10 @@ class PackageByFeatureTest {
             .that().areAssignableTo(Repository.class)
             .should().notBePublic()
             .because("AGENTS.md says other features use the public service, never the repository");
+
+    @ArchTest
+    static final ArchRule features_have_no_cycles = slices()
+            .matching("dev.danvega.bookstore.(*)..")
+            .should().beFreeOfCycles()
+            .because("AGENTS.md says features must not depend on each other in a loop");
 }
