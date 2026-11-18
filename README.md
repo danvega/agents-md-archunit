@@ -2,44 +2,67 @@
 
 A small Spring Boot bookstore that shows one idea. A rule in AGENTS.md is a request. A test that fails the build is proof the rule was followed.
 
-The rule here is "package by feature". [AGENTS.md](AGENTS.md) asks for it. [PackageByFeatureTest](src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java) checks it with ArchUnit on every `./mvnw verify`.
+This is the `video-start` branch. It's where the video begins.
 
-## The rule and its check
+## Where this branch starts
 
-| AGENTS.md asks | ArchUnit checks |
+[AGENTS.md](AGENTS.md) asks for package by feature. Nothing checks it yet.
+
+Reviews were added the layered way. The code sits in `controller`, `service`, `repository` and `model` packages. `BookRepository` in `catalog` was made `public` so the review code could use it.
+
+The build still passes:
+
+```bash
+./mvnw verify
+```
+
+Every test is green, and the rule is broken. That's the problem this video fixes.
+
+## What you add
+
+Write `src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java` with two ArchUnit rules. ArchUnit is already in [pom.xml](pom.xml).
+
+| AGENTS.md asks | ArchUnit rule |
 | --- | --- |
 | No `controller`, `service`, `repository` or `model` packages | `no_layer_packages` |
 | A feature's repository is package-private. Other features call its public service | `repositories_stay_in_their_feature` |
+
+Run `./mvnw verify` again. The build fails and names each class that broke the rule.
+
+The finished test is on `video-end`:
+
+```bash
+git show video-end:src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java
+```
+
+## A check is not a gate until something runs it
+
+The agent can skip the test or ignore a failure. [.claude/settings.json](.claude/settings.json) adds a Claude Code Stop hook so it can't. When the agent tries to finish a turn, [verify-gate.sh](.claude/hooks/verify-gate.sh) runs:
+
+1. If nothing changed, the agent may stop.
+2. It runs `./mvnw verify`. If anything fails, the agent is blocked and gets the failing rules as feedback.
+3. After one blocked retry, the agent may stop, so a broken build can't loop forever.
+
+The hook only covers Claude Code. A required CI check is the gate for everything else.
 
 ## Branches
 
 | Branch | What it is | `./mvnw verify` |
 | --- | --- | --- |
+| `video-start` | Reviews done the layered way, the Stop hook, no ArchUnit test yet. | passes, rule broken |
+| `video-end` | Reviews as their own `reviews` feature that calls `Catalog`. The ArchUnit test and the Stop hook. | passes |
 | `start` | `catalog` and `orders` features, AGENTS.md and the gate. No reviews yet. | passes |
-| `demo-red` | Reviews added the way an agent often does it: layer packages and a public `BookRepository`. The feature tests pass. | fails on the gate |
-| `main` | Reviews added as a `reviews` feature that talks to the catalog through `Catalog`. | passes |
+| `demo-red` | `start` plus the layered reviews. | fails on the gate |
+| `main` | The finished app, with more ArchUnit rules and a Spring Security gate. | passes |
 
-`demo-red` is staged by hand, so the red build is the same on every take. To run it for real, check out `start` and give your agent [prompts/add-reviews.md](prompts/add-reviews.md).
+The layered reviews were written by hand, so the starting point is the same on every take. To see what your own agent does, check out `start` and give it [prompts/add-reviews.md](prompts/add-reviews.md).
 
 ## Run it
 
 You need Java 25 or later.
 
 ```bash
-./mvnw verify
-```
-
-```bash
 ./mvnw spring-boot:run
 ```
 
 [bookstore.http](bookstore.http) has sample requests.
-
-## See the gate fail
-
-```bash
-git switch demo-red
-./mvnw verify
-```
-
-The feature tests pass. `PackageByFeatureTest` fails and names each class that broke the rule.
