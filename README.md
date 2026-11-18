@@ -58,7 +58,6 @@ The hook only covers Claude Code. A required CI check is the gate for everything
 | `video-start` | Reviews done the layered way, the Stop hook, no ArchUnit test yet. | passes, rule broken |
 | `video-end` | Reviews as their own `reviews` feature that calls `Catalog`. The ArchUnit test and the Stop hook. | passes |
 | `start` | `catalog` and `orders` features, AGENTS.md and the gate. No reviews yet. | passes |
-| `demo-red` | `start` plus the layered reviews. | fails on the gate |
 | `main` | The finished app, with more ArchUnit rules and a Spring Security gate. | passes |
 
 The layered reviews were written by hand, so the starting point is the same on every take. To see what your own agent does, check out `start` and give it [prompts/add-reviews.md](prompts/add-reviews.md).
