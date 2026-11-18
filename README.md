@@ -20,19 +20,25 @@ Every test is green, and the rule is broken. That's the problem this video fixes
 
 ## What you add
 
-Write `src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java` with two ArchUnit rules. ArchUnit is already in [pom.xml](pom.xml).
+Bring in the ArchUnit test from `video-end`. ArchUnit is already in [pom.xml](pom.xml).
+
+```bash
+git checkout video-end -- src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java
+```
+
+The test has two rules. Each one checks a line in AGENTS.md.
 
 | AGENTS.md asks | ArchUnit rule |
 | --- | --- |
 | No `controller`, `service`, `repository` or `model` packages | `no_layer_packages` |
 | A feature's repository is package-private. Other features call its public service | `repositories_stay_in_their_feature` |
 
-Run `./mvnw verify` again. The build fails and names each class that broke the rule.
+Run `./mvnw verify` again. The code hasn't changed. Now the build fails and names each class that broke the rule.
 
-The finished test is on `video-end`:
+To see the fix, switch to `video-end`:
 
 ```bash
-git show video-end:src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java
+git switch video-end
 ```
 
 ## A check is not a gate until something runs it
