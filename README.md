@@ -66,10 +66,11 @@ After one blocked retry the hook lets the agent stop, so a broken build can't lo
 | Branch | What it is | `./mvnw verify` |
 | --- | --- | --- |
 | `start` | `catalog` and `orders` features, AGENTS.md and the gate. No reviews yet. | passes |
-| `demo-red` | Reviews added the way an agent often does it: layer packages and a public `BookRepository`. The feature tests pass. | fails on the gate |
-| `main` | Reviews added as a `reviews` feature that talks to the catalog through `Catalog`. | passes |
+| `video-start` | Reviews done the layered way, the Stop hook, no ArchUnit test yet. | passes, rule broken |
+| `video-end` | Reviews as their own `reviews` feature that calls `Catalog`. The ArchUnit test and the Stop hook. | passes |
+| `main` | The finished app, with more ArchUnit rules and a Spring Security gate. | passes |
 
-`demo-red` is staged by hand, so the red build is the same on every take. To run it for real, check out `start` and give your agent [prompts/add-reviews.md](prompts/add-reviews.md).
+The layered reviews on `video-start` were written by hand, so the starting point is the same on every take. To see what your own agent does, check out `start` and give it [prompts/add-reviews.md](prompts/add-reviews.md).
 
 ## Run it
 
@@ -88,7 +89,8 @@ You need Java 25 or later.
 ## See the gate fail
 
 ```bash
-git switch demo-red
+git switch video-start
+git checkout video-end -- src/test/java/dev/danvega/bookstore/PackageByFeatureTest.java
 ./mvnw verify
 ```
 
