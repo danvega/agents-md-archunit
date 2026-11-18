@@ -28,4 +28,8 @@
 - Use Jackson 3 (`tools.jackson`). No `com.fasterxml.jackson.core` or `databind` imports.
 
 ## Done means
-- `./mvnw verify` passes.
+- `./mvnw verify` passes. Run it yourself and report what it printed. A Stop hook runs it again before you can finish.
+- You did not weaken a check to get there. Don't edit the ArchUnit tests, `SecurityGateTest`, `public-routes.txt` or `.claude/`. Don't delete tests or add `@Disabled`. If a check looks wrong, stop and say why.
+- New behavior has a test that fails without your change.
+- Every new endpoint needs a login, unless the task says it is public. A public route goes in `public-routes.txt`, and your summary says so.
+- Your summary lists what changed, what you checked, and what you could not check.

@@ -49,6 +49,18 @@ To see the gate fail, swap the rules in [SecurityConfig](src/main/java/dev/danve
 
 The feature tests still pass. Both security checks fail, and the sweep names `POST /api/orders` and `POST /api/books/{bookId}/reviews` as open.
 
+## A check is not a gate until something runs it
+
+A test the agent runs itself is still a request. It can skip the test, ignore the failure, or report a pass that didn't happen. A gate is a check that something outside the agent runs, where a failure blocks the work.
+
+[.claude/settings.json](.claude/settings.json) adds a Claude Code Stop hook. When the agent tries to finish a turn, [security-gate.sh](.claude/hooks/security-gate.sh) runs:
+
+1. If nothing changed, the agent may stop.
+2. If `SecurityGateTest` or `public-routes.txt` is missing, the agent is blocked and told to put them back.
+3. It runs `./mvnw verify`. If anything fails, the agent is blocked and gets the failing rules and tests as feedback.
+
+After one blocked retry the hook lets the agent stop, so a broken build can't loop forever. The hook only covers Claude Code. A required CI check is the gate for everything else.
+
 ## Branches
 
 | Branch | What it is | `./mvnw verify` |
